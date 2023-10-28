@@ -1,8 +1,8 @@
 import os
 import importlib
 import numpy as np
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 from ple import PLE
 
 
@@ -43,11 +43,11 @@ class BaseEnv(gym.Env):
   def step(self, action):
     reward = self.gameOb.act(self.action_set[action])
     done = self.gameOb.game_over()
-    return (self.gameOb.getGameState(), reward, done, {})
+    return (self.gameOb.getGameState(), reward, done, False, {})
     
   def reset(self):
     self.gameOb.reset_game()
-    return self.gameOb.getGameState()
+    return self.gameOb.getGameState(), {}
   
   def seed(self, seed=None):
     self.gameOb.rng.seed(seed)

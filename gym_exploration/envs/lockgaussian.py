@@ -1,6 +1,6 @@
-import gym
+import gymnasium as gym
 import numpy as np
-from gym.spaces import MultiBinary, Discrete, Box
+from gymnasium.spaces import MultiBinary, Discrete, Box
 
 from gym_exploration.envs.lockbernoulli import LockBernoulliEnv
 
@@ -37,10 +37,10 @@ if __name__ == '__main__':
   print('Obsevation space low:', env.observation_space.low)
 
   for i in range(1):
-    ob = env.reset()
+    ob, _ = env.reset()
     while True:
       action = env.action_space.sample()
-      ob, reward, done, _ = env.step(action)
+      ob, reward, done, _, _ = env.step(action)
       print('Observation:', ob)
       print('Reward:', reward)
       print('Done:', done)

@@ -1,6 +1,8 @@
 # Gym Games
 
-This is a gym compatible version of various games for reinforcement learning.
+This is a gymnasium version of https://github.com/qlan3/gym-games.
+
+This is a gymnasium compatible version of various games for reinforcement learning.
 
 For [PyGame Learning Environment](https://pygame-learning-environment.readthedocs.io/en/latest/user/games.html), the default observation is a non-visual state representation of the game. 
 
@@ -36,9 +38,9 @@ For [MinAtar](https://github.com/kenjyoung/MinAtar), the default observation is 
 
 ## Installation
 
-### Gym
+### Gymnasium
 
-Please read the instruction [here](https://github.com/openai/gym).
+Please read the instruction [here](https://gymnasium.farama.org/).
 
 ### Pygame
 
@@ -64,7 +66,7 @@ Please read the instruction [here](https://github.com/openai/gym).
 
 ### Gym-games
 
-    pip install git+https://github.com/qlan3/gym-games.git
+    pip install git+https://github.com/yiwan-rl/gym-games.git
 
 ## Example
 
@@ -88,7 +90,7 @@ Please use this bibtex to cite this repo:
 
 ## References
 
-- [gym](https://github.com/openai/gym/tree/master/)
+- [gymnasium](https://gymnasium.farama.org/)
 - [gym-ple](https://github.com/lusob/gym-ple)
 - [SRNN](https://github.com/VincentLiu3/SRNN)
 - [MinAtar](https://github.com/kenjyoung/MinAtar)

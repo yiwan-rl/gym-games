@@ -1,7 +1,7 @@
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 import numpy as np
-from gym.utils import seeding
+from gymnasium.utils import seeding
 
 
 # Adapted from https://github.com/facebookresearch/RandomizedValueFunctions/blob/master/qlearn/envs/nchain.py
@@ -47,13 +47,13 @@ class NChainEnv(gym.Env):
       is_done = True
     else:
       is_done = False
-    return (v <= self.state).astype('float32'), r, is_done, {}
+    return (v <= self.state).astype('float32'), r, is_done, False, {}
 
   def reset(self):
     v = np.arange(self.n)
     self.state = 1
     self.steps = 0
-    return (v <= self.state).astype('float32')
+    return (v <= self.state).astype('float32'), {}
   
   def seed(self, seed=None):
     self.np_random, seed = seeding.np_random(seed)

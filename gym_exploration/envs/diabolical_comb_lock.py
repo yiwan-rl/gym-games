@@ -1,8 +1,8 @@
 import random
-import gym
+import gymnasium as gym
 import numpy as np
-from gym.utils import seeding
-from gym.spaces import MultiBinary, Discrete, Box
+from gymnasium.utils import seeding
+from gymnasium.spaces import MultiBinary, Discrete, Box
 
 
 # Adapted from https://github.com/mbhenaff/PCPG/blob/main/deep_rl/component/envs.py
@@ -42,7 +42,7 @@ class DiabolicalCombLockEnv(gym.Env):
   def reset(self):
     self.h = 0
     obs = np.zeros(self.observation_space.shape)
-    return obs
+    return obs, {}
 
   def step(self, action):
     assert self.n_locks == 2
@@ -53,11 +53,11 @@ class DiabolicalCombLockEnv(gym.Env):
       reward, done = 0.0, False
       info = {'state': (0, self.h, self.lock_id)}
     else:
-      obs, reward, done, info = self.locks[self.lock_id].step(action)
+      obs, reward, done, _, info = self.locks[self.lock_id].step(action)
       info['state'] = info['state'] + (self.lock_id,)
     self.h += 1
     obs = np.append(obs, self.lock_id)
-    return obs, reward, done, info
+    return obs, reward, done, False, info
 
   def render(self, mode='human'):
     return (self.locks[0].render(mode), self.locks[1].render(mode))
@@ -99,8 +99,8 @@ class OneDiabolicalCombinationLock(gym.Env):
   def seed(self, seed=0):
     self.rng, seed = seeding.np_random(seed)
     # self.rng = np.random.RandomState(seed)
-    self.opt_a = self.rng.randint(low=0, high=self.action_space.n, size=self.horizon)
-    self.opt_b = self.rng.randint(low=0, high=self.action_space.n, size=self.horizon)
+    self.opt_a = self.rng.integers(low=0, high=self.action_space.n, size=self.horizon)
+    self.opt_b = self.rng.integers(low=0, high=self.action_space.n, size=self.horizon)
     return seed
 
   def render(self, mode='human'):
@@ -125,7 +125,7 @@ class OneDiabolicalCombinationLock(gym.Env):
     else:
       raise AssertionError("Toss value can only be 1 or 0. Found %r" % toss_value)
     self.h = 0
-    return self.make_obs(self.state)
+    return self.make_obs(self.state), {}
 
   def transition(self, x, a):
     if x is None:
@@ -171,7 +171,7 @@ class OneDiabolicalCombinationLock(gym.Env):
     obs = self.make_obs(self.state)
     done = self.h == self.horizon
     info = {"state": None if self.state is None else tuple(self.state)}
-    return obs, float(reward), done, info
+    return obs, float(reward), done, False, info
 
   def close(self):
     return None

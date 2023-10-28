@@ -1,8 +1,8 @@
 import os
 import importlib
 import numpy as np
-import gym
-from gym import spaces
+import gymnasium
+from gymnasium import spaces
 from ple import PLE
 
 from gym_pygame.envs.base import BaseEnv
@@ -29,10 +29,10 @@ if __name__ == '__main__':
   print('Obsevation space low:', env.observation_space.low)
 
   for i in range(1):
-    ob = env.reset()
+    ob, _ = env.reset()
     for _ in range(500):
       action = env.action_space.sample()
-      ob, reward, done, _ = env.step(action)
+      ob, reward, done, _, _ = env.step(action)
       env.render('human')
       #env.render('rgb_array')
       print('Observation:', ob)

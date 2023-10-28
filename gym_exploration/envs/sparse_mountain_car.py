@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from gym.envs.classic_control.mountain_car import MountainCarEnv
+from gymnasium.envs.classic_control.mountain_car import MountainCarEnv
 
 
 class SparseMountainCarEnv(MountainCarEnv):
@@ -32,7 +32,10 @@ class SparseMountainCarEnv(MountainCarEnv):
       reward = 0.0
 
     self.state = (position, velocity)
-    return np.array(self.state), reward, done, {}
+    return np.array(self.state), reward, done, False, {}
+
+  def seed(self, s: int):
+    pass
 
 
 
@@ -45,10 +48,10 @@ if __name__ == '__main__':
   print('Obsevation space low:', env.observation_space.low)
 
   for i in range(1):
-    ob = env.reset()
+    ob, _ = env.reset()
     for _ in range(10):
       action = env.action_space.sample()
-      ob, reward, done, _ = env.step(action)
+      ob, reward, done, _, _ = env.step(action)
       print('Observation:', ob)
       print('Reward:', reward)
       print('Done:', done)

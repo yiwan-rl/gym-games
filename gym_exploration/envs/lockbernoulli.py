@@ -1,7 +1,7 @@
-import gym
+import gymnasium as gym
 import numpy as np
-from gym.utils import seeding
-from gym.spaces import MultiBinary, Discrete, Box
+from gymnasium.utils import seeding
+from gymnasium.spaces import MultiBinary, Discrete, Box
 
 
 # Adapted from https://raw.githubusercontent.com/microsoft/StateDecoding/master/LockBernoulli.py
@@ -26,7 +26,7 @@ class LockBernoulliEnv(gym.Env):
     self.h = 0
     self.state = 0
     obs = self.make_obs(self.state)
-    return (obs)
+    return (obs), {}
 
   def make_obs(self, s):
     new_x = np.zeros((self.n,))
@@ -73,15 +73,15 @@ class LockBernoulliEnv(gym.Env):
     self.h += 1
     self.state = next_state
     obs = self.make_obs(self.state)
-    return obs, r, done, {}
+    return obs, r, done, False, {}
 
   def render(self, mode='human'):
     print(f'{chr(self.state+65)}{self.h}')
 
   def seed(self, seed=None):
     self.np_random, seed = seeding.np_random(seed)
-    self.opt_a = self.np_random.randint(low=0, high=self.action_space.n, size=self.horizon)
-    self.opt_b = self.np_random.randint(low=0, high=self.action_space.n, size=self.horizon)
+    self.opt_a = self.np_random.integers(low=0, high=self.action_space.n, size=self.horizon)
+    self.opt_b = self.np_random.integers(low=0, high=self.action_space.n, size=self.horizon)
     if hasattr(gym.spaces, 'prng'):
       gym.spaces.prng.seed(seed)
     return seed

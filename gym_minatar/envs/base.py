@@ -1,5 +1,5 @@
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 
 from minatar import Environment
 
@@ -22,11 +22,11 @@ class BaseEnv(gym.Env):
   def step(self, action):
     action = self.action_set[action]
     reward, done = self.game.act(action)
-    return (self.game.state(), reward, done, {})
+    return (self.game.state(), reward, done, False, {})
     
   def reset(self):
     self.game.reset()
-    return self.game.state()
+    return self.game.state(), {}
   
   def seed(self, seed=None):
     self.game = Environment(
