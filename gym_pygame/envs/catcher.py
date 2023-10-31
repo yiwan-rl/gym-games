@@ -5,7 +5,7 @@ import gymnasium
 from gymnasium import spaces
 from ple import PLE
 
-from gym_pygame.envs.base import BaseEnv
+from .base import BaseEnv
 
 
 class CatcherEnv(BaseEnv):
@@ -23,7 +23,6 @@ class CatcherEnv(BaseEnv):
 
 if __name__ == '__main__':
   env = CatcherEnv(normalize=True)
-  env.seed(0)
   print('Action space:', env.action_space)
   print('Action set:', env.action_set)
   print('Obsevation space:', env.observation_space)
@@ -31,12 +30,12 @@ if __name__ == '__main__':
   print('Obsevation space low:', env.observation_space.low)
 
   for i in range(1):
-    ob, _ = env.reset()
+    ob, _ = env.reset(seed=0)
     while True:
       action = env.action_space.sample()
       ob, reward, done, _, _ = env.step(action)
       # env.render('rgb_array')
-      env.render('human')
+      # env.render('human')
       print('Observation:', ob)
       print('Reward:', reward)
       print('Done:', done)

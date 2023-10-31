@@ -1,8 +1,7 @@
-import random
 import gymnasium as gym
 import numpy as np
-from gymnasium.utils import seeding
-from gymnasium.spaces import MultiBinary, Discrete, Box
+from gymnasium.spaces import Discrete, Box
+from typing import Optional
 
 
 # Adapted from https://github.com/mbhenaff/PCPG/blob/main/deep_rl/component/envs.py
@@ -12,9 +11,6 @@ class DiabolicalCombLockEnv(gym.Env):
   Please check [PC-PG: Policy Cover Directed Exploration for Provable Policy Gradient Learning](http://arxiv.org/abs/2007.08459) for more details.
   '''
   def __init__(self, horizon=10, swap=0.5):
-    self.init(horizon, swap)
-
-  def init(self, horizon=10, swap=0.5):
     self.horizon = horizon
     self.n_states = 3
     self.num_actions = 10
@@ -26,20 +22,19 @@ class DiabolicalCombLockEnv(gym.Env):
     self.n_features = self.locks[0].observation_space.shape[0] + 1
     self.observation_space = Box(low=0.0, high=1.0, shape=(self.n_features,), dtype=np.float32)
 
-  def seed(self, seed=0):
+  def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    if seed is None:
+      Warning("seed is required for this game. Automatically set the seed to 0.")
+      seed = 0
+    super().reset(seed=seed)
     if seed % 2 == 0:
       self.locks[0].optimal_reward = self.optimal_reward
       self.locks[1].optimal_reward = self.suboptimal_reward
     else:
       self.locks[0].optimal_reward = self.suboptimal_reward
       self.locks[1].optimal_reward = self.optimal_reward
-    if hasattr(gym.spaces, 'prng'):
-        gym.spaces.prng.seed(seed)
-    self.locks[0].seed(seed)
-    self.locks[1].seed(seed)
-    return seed
-
-  def reset(self):
+    self.locks[0].reset(seed=seed)
+    self.locks[1].reset(seed=seed)
     self.h = 0
     obs = np.zeros(self.observation_space.shape)
     return obs, {}
@@ -74,9 +69,6 @@ class OneDiabolicalCombinationLock(gym.Env):
   :param swap: Probability for stochastic edges
   """
   def __init__(self, horizon=10, swap=0.5):
-    self.init(horizon, swap)
-  
-  def init(self, horizon=10, swap=0.5):
     self.horizon = horizon
     self.swap = swap
     self.tolerance = 0.5
@@ -96,13 +88,6 @@ class OneDiabolicalCombinationLock(gym.Env):
     self.obs_dim = 2 * horizon + 4
     self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
 
-  def seed(self, seed=0):
-    self.rng, seed = seeding.np_random(seed)
-    # self.rng = np.random.RandomState(seed)
-    self.opt_a = self.rng.integers(low=0, high=self.action_space.n, size=self.horizon)
-    self.opt_b = self.rng.integers(low=0, high=self.action_space.n, size=self.horizon)
-    return seed
-
   def render(self, mode='human'):
     return self.make_obs(self.state)
 
@@ -115,9 +100,12 @@ class OneDiabolicalCombinationLock(gym.Env):
       v[3 + x[1]] = 1.0
       return v
 
-  def reset(self):
+  def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
     # Start stochastically in one of the two live states
-    toss_value = self.rng.binomial(1, 0.5)
+    super().reset(seed=seed)
+    self.opt_a = self.np_random.integers(low=0, high=self.action_space.n, size=self.horizon)
+    self.opt_b = self.np_random.integers(low=0, high=self.action_space.n, size=self.horizon)
+    toss_value = self.np_random.binomial(1, 0.5)
     if toss_value == 0:
       self.state = [0, 0]
     elif toss_value == 1:
@@ -130,7 +118,7 @@ class OneDiabolicalCombinationLock(gym.Env):
   def transition(self, x, a):
     if x is None:
       raise Exception("Not in any state")
-    b = self.rng.binomial(1, self.swap)
+    b = self.np_random.binomial(1, self.swap)
     if x[0] == 0 and a == self.opt_a[x[1]]:
       if b == 0:
         return [0, x[1] + 1]
@@ -147,12 +135,12 @@ class OneDiabolicalCombinationLock(gym.Env):
   def reward(self, x, a, next_x):
     # If the agent reaches the final live states then give it the optimal reward.
     if (x == [0, self.horizon-1] and a == self.opt_a[x[1]]) or (x == [1, self.horizon-1] and a == self.opt_b[x[1]]):
-      return self.optimal_reward * self.rng.binomial(1, self.optimal_reward_prob)
+      return self.optimal_reward * self.np_random.binomial(1, self.optimal_reward_prob)
     # If reaching the dead state for the first time then give it a small anti-shaping reward.
     # This anti-shaping reward is anti-correlated with the optimal reward.
     if x is not None and next_x is not None:
       if x[0] != 2 and next_x[0] == 2:
-        return self.anti_shaping_reward * self.rng.binomial(1, 0.5)
+        return self.anti_shaping_reward * self.np_random.binomial(1, 0.5)
       elif x[0] != 2 and next_x[0] != 2:
         return -self.anti_shaping_reward2 / (self.horizon-1)
     return 0
@@ -177,20 +165,9 @@ class OneDiabolicalCombinationLock(gym.Env):
     return None
 
 
-def set_random_seed(seed):
-  random.seed(seed)
-  np.random.seed(seed)
-
 if __name__ == '__main__':
   seed = 4
-  set_random_seed(seed)
-  env = DiabolicalCombLockEnv()
-  env_cfg = {"horizon":5, "swap":0.5}
-  env.init(**env_cfg)
-  env.seed(seed)
-  env.action_space.np_random.seed(seed)
-  env.locks[0].action_space.np_random.seed(seed)
-  env.locks[1].action_space.np_random.seed(seed)
+  env = DiabolicalCombLockEnv(horizon=5, swap=0.5)
   
   print('Action space:', env.action_space)
   print('Obsevation space:', env.observation_space)
@@ -201,11 +178,11 @@ if __name__ == '__main__':
     pass
   
   for i in range(1):
-    ob = env.reset()
+    ob = env.reset(seed=seed)
     print('Observation:', ob)
     while True:
       action = env.action_space.sample()
-      ob, reward, done, _ = env.step(action)
+      ob, reward, done, _, _ = env.step(action)
       print('Obser:', ob)
       print('action:', action)
       print('Reward:', reward)

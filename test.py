@@ -37,15 +37,7 @@ if __name__ == '__main__':
   games = ['Catcher-PLE-v0', 'Pixelcopter-PLE-v0', 'PuckWorld-PLE-v0', 'Pong-PLE-v0', 'Asterix-MinAtar-v0', 'Breakout-MinAtar-v0', 'Freeway-MinAtar-v0', 'Seaquest-MinAtar-v0', 'SpaceInvaders-MinAtar-v0', 'Asterix-MinAtar-v1', 'Breakout-MinAtar-v1', 'Freeway-MinAtar-v1', 'Seaquest-MinAtar-v1', 'SpaceInvaders-MinAtar-v1', 'NChain-v1', 'LockBernoulli-v0', 'LockGaussian-v0', 'SparseMountainCar-v0', 'DiabolicalCombLock-v0']
   for game in games:
     env = gym.make(game)
-    if game in ['NChain-v1', 'LockBernoulli-v0', 'LockGaussian-v0', 'DiabolicalCombLock-v0']:
-      game_cfg = {
-        'NChain-v1': {'n':5},
-        'LockBernoulli-v0': {'horizon':10, 'dimension':10, 'switch':0.1},
-        'LockGaussian-v0': {'horizon':9, 'dimension':9, 'switch':0.1, 'noise':0.1},
-        'DiabolicalCombLock-v0': {"horizon":5, "swap":0.5}
-      }
-      env.init(**game_cfg[game])
-    env.seed(0)
+    # env.seed(0)
 
     print('Game:', game)
     # print('Action space:', env.action_space)
@@ -56,7 +48,7 @@ if __name__ == '__main__':
     # except:
     #   pass
     for i in range(1):
-      ob, _ = env.reset()
+      ob, _ = env.reset(seed=0)  # uses gymnasium's random seed sequence generator
       for _ in range(3):
         action = env.action_space.sample()
         ob, reward, done, _, _ = env.step(action)

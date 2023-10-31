@@ -2,7 +2,7 @@ import gymnasium as gym
 from gymnasium import spaces
 
 from minatar import Environment
-
+from typing import Optional
 
 class BaseEnv(gym.Env):
   metadata = {'render.modes': ['human', 'rgb_array']}
@@ -24,17 +24,10 @@ class BaseEnv(gym.Env):
     reward, done = self.game.act(action)
     return (self.game.state(), reward, done, False, {})
     
-  def reset(self):
-    self.game.reset()
+  def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    super().reset(seed=seed)
+    self.game.reset(self.np_random)
     return self.game.state(), {}
-  
-  def seed(self, seed=None):
-    self.game = Environment(
-      env_name=self.game_name,
-      random_seed=seed,
-      **self.game_kwargs
-    )
-    return seed
 
   def render(self, mode='human'):
     if mode == 'rgb_array':

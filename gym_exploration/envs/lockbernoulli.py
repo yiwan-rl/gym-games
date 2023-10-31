@@ -1,7 +1,7 @@
 import gymnasium as gym
 import numpy as np
-from gymnasium.utils import seeding
-from gymnasium.spaces import MultiBinary, Discrete, Box
+from gymnasium.spaces import Discrete, Box
+from typing import Optional
 
 
 # Adapted from https://raw.githubusercontent.com/microsoft/StateDecoding/master/LockBernoulli.py
@@ -11,18 +11,17 @@ class LockBernoulliEnv(gym.Env):
   Check [Provably efficient RL with Rich Observations via Latent State Decoding](https://arxiv.org/pdf/1901.09018.pdf) for a detailed description.
   '''
   def __init__(self, dimension=0, switch=0.0, horizon=2):
-    self.init(dimension, switch, horizon)
-
-  def init(self, dimension=0, switch=0.0, horizon=2):
     self.dimension = dimension
     self.switch = switch
     self.horizon = horizon
     self.n = self.dimension+3
     self.observation_space = Box(low=0.0, high=1.0, shape=(self.n,), dtype=np.float32)
     self.action_space = Discrete(4)
-    self.seed()
 
-  def reset(self):
+  def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    super().reset(seed=seed)
+    self.opt_a = self.np_random.integers(low=0, high=self.action_space.n, size=self.horizon)
+    self.opt_b = self.np_random.integers(low=0, high=self.action_space.n, size=self.horizon)
     self.h = 0
     self.state = 0
     obs = self.make_obs(self.state)
@@ -78,23 +77,12 @@ class LockBernoulliEnv(gym.Env):
   def render(self, mode='human'):
     print(f'{chr(self.state+65)}{self.h}')
 
-  def seed(self, seed=None):
-    self.np_random, seed = seeding.np_random(seed)
-    self.opt_a = self.np_random.integers(low=0, high=self.action_space.n, size=self.horizon)
-    self.opt_b = self.np_random.integers(low=0, high=self.action_space.n, size=self.horizon)
-    if hasattr(gym.spaces, 'prng'):
-      gym.spaces.prng.seed(seed)
-    return seed
-
   def close(self):
     return 0
 
 
 if __name__ == '__main__':
-  env = LockBernoulliEnv()
-  env.seed(0)
-  env_cfg = {"horizon":10, "dimension":10, "switch":0.1}
-  env.init(**env_cfg)
+  env = LockBernoulliEnv(dimension=10, switch=0.1, horizon=10)
   print('Action space:', env.action_space)
   print('Obsevation space:', env.observation_space)
   try:
@@ -104,11 +92,11 @@ if __name__ == '__main__':
     pass
 
   for i in range(1):
-    ob = env.reset()
+    ob = env.reset(seed=0)
     print('Observation:', ob)
     while True:
       action = env.action_space.sample()
-      ob, reward, done, _ = env.step(action)
+      ob, reward, done, _, _ = env.step(action)
       print('Observation:', ob)
       print('Reward:', reward)
       print('Done:', done)

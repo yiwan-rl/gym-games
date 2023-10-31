@@ -4,6 +4,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
 from ple import PLE
+from typing import Optional
 
 
 class BaseEnv(gym.Env):
@@ -45,14 +46,11 @@ class BaseEnv(gym.Env):
     done = self.gameOb.game_over()
     return (self.gameOb.getGameState(), reward, done, False, {})
     
-  def reset(self):
+  def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    super().reset(seed=seed)
+    self.gameOb.game.rng = self.np_random
     self.gameOb.reset_game()
     return self.gameOb.getGameState(), {}
-  
-  def seed(self, seed=None):
-    self.gameOb.rng.seed(seed)
-    self.gameOb.init()
-    return seed
 
   def render(self, mode='human'):
     # img = self.gameOb.getScreenRGB() 
@@ -61,10 +59,11 @@ class BaseEnv(gym.Env):
     if mode == 'rgb_array':
       return img
     elif mode == 'human':
-      from gym.envs.classic_control import rendering
-      if self.viewer is None:
-        self.viewer = rendering.SimpleImageViewer()
-      self.viewer.imshow(img)
+      # from gymnasium.envs.classic_control import rendering
+      # if self.viewer is None:
+      #   self.viewer = rendering.SimpleImageViewer()
+      # self.viewer.imshow(img)
+      raise NotImplementedError
 
   def close(self):
     if self.viewer != None:

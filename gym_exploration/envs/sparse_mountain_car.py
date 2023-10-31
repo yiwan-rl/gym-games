@@ -34,21 +34,17 @@ class SparseMountainCarEnv(MountainCarEnv):
     self.state = (position, velocity)
     return np.array(self.state), reward, done, False, {}
 
-  def seed(self, s: int):
-    pass
-
 
 
 if __name__ == '__main__':
   env = SparseMountainCarEnv()
-  env.seed(0)
   print('Action space:', env.action_space)
   print('Obsevation space:', env.observation_space)
   print('Obsevation space high:', env.observation_space.high)
   print('Obsevation space low:', env.observation_space.low)
 
   for i in range(1):
-    ob, _ = env.reset()
+    ob, _ = env.reset(seed=0)
     for _ in range(10):
       action = env.action_space.sample()
       ob, reward, done, _, _ = env.step(action)
