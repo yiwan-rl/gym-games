@@ -34,7 +34,7 @@ if __name__ == '__main__':
   # game = 'LockGaussian-v0'
   # game = 'SparseMountainCar-v0'
   # game = 'DiabolicalCombLock-v0'
-  games = ['Catcher-PLE-v0', 'Pixelcopter-PLE-v0', 'PuckWorld-PLE-v0', 'Pong-PLE-v0', 'Asterix-MinAtar-v0', 'Breakout-MinAtar-v0', 'Freeway-MinAtar-v0', 'Seaquest-MinAtar-v0', 'SpaceInvaders-MinAtar-v0', 'Asterix-MinAtar-v1', 'Breakout-MinAtar-v1', 'Freeway-MinAtar-v1', 'Seaquest-MinAtar-v1', 'SpaceInvaders-MinAtar-v1', 'NChain-v1', 'LockBernoulli-v0', 'LockGaussian-v0', 'SparseMountainCar-v0', 'DiabolicalCombLock-v0']
+  games = ['Breakout-MinAtar-v0', 'Catcher-PLE-v0', 'Pixelcopter-PLE-v0', 'PuckWorld-PLE-v0', 'Pong-PLE-v0', 'Asterix-MinAtar-v0', 'Freeway-MinAtar-v0', 'Seaquest-MinAtar-v0', 'SpaceInvaders-MinAtar-v0', 'Asterix-MinAtar-v1', 'Breakout-MinAtar-v1', 'Freeway-MinAtar-v1', 'Seaquest-MinAtar-v1', 'SpaceInvaders-MinAtar-v1', 'NChain-v1', 'LockBernoulli-v0', 'LockGaussian-v0', 'SparseMountainCar-v0', 'DiabolicalCombLock-v0']
   for game in games:
     env = gym.make(game)
     # env.seed(0)

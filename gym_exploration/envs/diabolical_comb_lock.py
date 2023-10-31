@@ -44,7 +44,7 @@ class DiabolicalCombLockEnv(gym.Env):
     if self.h == 0:
       # In initial state, the action chooses lock
       self.lock_id = 0 if action < 5 else 1
-      obs = self.locks[self.lock_id].reset()
+      obs, _ = self.locks[self.lock_id].reset()
       reward, done = 0.0, False
       info = {'state': (0, self.h, self.lock_id)}
     else:
