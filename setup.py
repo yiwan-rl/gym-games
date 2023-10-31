@@ -21,7 +21,6 @@ setup(
     'MinAtar',
     'gymnasium',
     'setuptools',
-    'pygame',
-    'ple'
+    'pygame'
   ]
 )
