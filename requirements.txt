@@ -1,4 +1,3 @@
-ple.egg==info
 setuptools>=65.5.1
 MinAtar
 numpy
