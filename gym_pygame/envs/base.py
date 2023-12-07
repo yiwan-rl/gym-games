@@ -52,7 +52,7 @@ class BaseEnv(gym.Env):
     self.gameOb.reset_game()
     return self.gameOb.getGameState(), {}
 
-  def render(self, mode='human'):
+  def render(self, mode='rgb_array'):
     # img = self.gameOb.getScreenRGB() 
     # img = self.gameOb.getScreenGrayscale()
     img = np.fliplr(np.rot90(self.gameOb.getScreenRGB(),3))
