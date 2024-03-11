@@ -3,8 +3,9 @@ from .base import BaseEnv
 
 class PuckWorldEnv(BaseEnv):
   # This is a continuous game.
-  def __init__(self, normalize=False, display=False, **kwargs):
+  def __init__(self, normalize=False, display=False, render_mode='rgb_array', **kwargs):
     self.game_name = 'PuckWorld'
+    self.render_mode = render_mode
     self.init(normalize, display, **kwargs)
     
   def get_ob_normalize(cls, state):
