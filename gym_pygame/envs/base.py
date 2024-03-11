@@ -10,8 +10,9 @@ from typing import Optional
 class BaseEnv(gym.Env):
   metadata = {'render.modes': ['human', 'rgb_array']}
 
-  def __init__(self, normalize=False, display=False, **kwargs):
+  def __init__(self, normalize=False, display=False, render_mode='rgb_array', **kwargs):
     self.game_name = 'Game Name'
+    self.render_mode = render_mode
     self.init(normalize, display, **kwargs)
     
   def init(self, normalize, display, **kwargs):
@@ -52,13 +53,14 @@ class BaseEnv(gym.Env):
     self.gameOb.reset_game()
     return self.gameOb.getGameState(), {}
 
-  def render(self, mode='rgb_array'):
+  def render(self):
     # img = self.gameOb.getScreenRGB() 
     # img = self.gameOb.getScreenGrayscale()
     img = np.fliplr(np.rot90(self.gameOb.getScreenRGB(),3))
-    if mode == 'rgb_array':
+    if self.render_mode == 'rgb_array':
       return img
-    elif mode == 'human':
+    else:
+      # if mode == 'human':
       # from gymnasium.envs.classic_control import rendering
       # if self.viewer is None:
       #   self.viewer = rendering.SimpleImageViewer()
