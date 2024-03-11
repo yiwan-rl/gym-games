@@ -9,8 +9,9 @@ from .base import BaseEnv
 
 
 class CatcherEnv(BaseEnv):
-  def __init__(self, normalize=True, display=False, **kwargs):
+  def __init__(self, normalize=True, display=False, render_mode='rgb_array', **kwargs):
     self.game_name = 'Catcher'
+    self.render_mode = render_mode
     self.init(normalize, display, **kwargs)
     
   def get_ob_normalize(self, state):
